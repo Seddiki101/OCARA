@@ -3,12 +3,73 @@ document.addEventListener('DOMContentLoaded', () => {
   var clearTextBtn=document.getElementById('clearTextBtn');
 
   clearTextBtn.addEventListener('click', (evt)=> {
-    if (confirm('⚠ 𝗡𝗼𝘁𝗶𝗰𝗲\n\n⯈ You are about to permanently remove all content present within the text field.\n')) {
+    if (confirm('⚠ 𝗜𝗺𝗽𝗼𝗿𝘁𝗮𝗻𝘁 𝗡𝗼𝘁𝗶𝗰𝗲\n\n⯈ You are about to permanently remove all content present within the text field.\n\n⯈ Please proceed to select [ OK ] to confirm deletion. Else, select [ Cancel ] instead to abort action.')) {
       inputText.value='';
     }
   }, false);
 
-  
+  var speakBtn=document.getElementById('speakBtn');
+  var stopBtn=document.getElementById('stopBtn');
+
+  var pitch=document.getElementById('pitch');
+  var pitchValue=document.getElementById('pitchValue');
+
+  var rate=document.getElementById('rate');
+  var rateValue=document.getElementById('rateValue');
+
+  var volume=document.getElementById('volume');
+  var volumeValue=document.getElementById('volumeValue');
+
+  const playSymbol='▶';
+  const pauseSymbol='❚❚';
+
+  speakBtn.addEventListener('click', (evt) => {
+    let isPaused=$().articulate('isPaused');
+    let isSpeaking=$().articulate('isSpeaking');
+
+    if(!isPaused && !isSpeaking) {
+      let voiceText=document.createElement('div');
+      voiceText.setAttribute('id','voiceText');
+      voiceText.innerHTML=inputText.value;
+
+      $(voiceText).articulate('speak');
+      evt.currentTarget.innerHTML=pauseSymbol;
+    } else if(!isPaused) {
+      $().articulate('pause');
+      evt.currentTarget.innerHTML=playSymbol;
+    } else if(isPaused) {
+      $().articulate('resume');
+      evt.currentTarget.innerHTML=pauseSymbol;
+    } else {
+      evt.currentTarget.innerHTML=playSymbol;
+    }
+  }, false);
+
+  window.addEventListener('utteranceHasEnded', (e) => {
+    document.getElementById('speakBtn').innerHTML=playSymbol;
+  }, false);
+
+  stopBtn.addEventListener('click', () => {
+    $().articulate('stop');
+  }, false);
+
+  pitch.addEventListener('change', (evt) => {
+    let newPitchVal=parseFloat(evt.currentTarget.value);
+    pitchValue.textContent = newPitchVal;
+    $().articulate('pitch', newPitchVal);
+  }, false);
+
+  rate.addEventListener('change', (evt) => {
+    let newRateVal=parseFloat(evt.currentTarget.value);
+    rateValue.textContent = newRateVal;
+    $().articulate('rate', newRateVal);
+  }, false);
+
+  volume.addEventListener('change', (evt) => {
+    let newVolumeVal=parseFloat(evt.currentTarget.value);
+    volumeValue.textContent = newVolumeVal;
+    $().articulate('volume', newVolumeVal);
+  }, false);
 
   var popoverTargets = document.querySelectorAll('[data-content]');
 
